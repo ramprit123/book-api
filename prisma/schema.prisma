@@ -1,25 +1,42 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+model Role {
+  id          String       @id @default(uuid())
+  name        String       @unique
+  description String?
+  permissions Permission[]  @relation("RolePermissions")
+  users       User[]       @relation("UserRoles")
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("roles")
+}
+
+model Permission {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  roles       Role[]   @relation("RolePermissions")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("permissions")
 }
 
 model User {
   id                   String    @id @default(uuid())
   email                String    @unique
   username             String    @unique
-  password             String // Hashed password
-  salt                 String // Salt for password hashing
+  password             String
+  salt                 String
   firstName            String?
   lastName             String?
   isEmailVerified      Boolean   @default(false)
@@ -32,6 +49,7 @@ model User {
   twoFactorEnabled     Boolean   @default(false)
   twoFactorSecret      String?
   active               Boolean   @default(true)
+  roles                Role[]    @relation("UserRoles")
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
 
