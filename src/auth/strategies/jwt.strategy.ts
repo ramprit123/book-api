@@ -1,9 +1,9 @@
+import configuration from '@app/config/configuration';
+import { UsersService } from '@app/users/users.service';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { ConfigService } from '@nestjs/config';
-import { UsersService } from '../../users/users.service';
-import configuration from '../../config/configuration';
 
 console.log(configuration().jwt.secret);
 

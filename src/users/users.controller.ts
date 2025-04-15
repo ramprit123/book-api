@@ -13,6 +13,10 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { RolesGuard } from '@app/auth/guards/roles.guard';
+import { AuthGuard } from '@nestjs/passport';
+import { Roles } from '@app/auth/decorators/roles.decorator';
+import { Role } from '@app/auth/enums/roles.enum';
 
 @ApiTags('Users')
 @Controller('users')
@@ -20,13 +24,17 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @ApiOperation({ summary: 'Create a new user' })
   @ApiResponse({ status: 201, description: 'User created successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Admin access required',
+  })
   async create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
-
   @Get()
   @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({ status: 200, description: 'Return all users' })
