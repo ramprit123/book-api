@@ -29,11 +29,19 @@ export class UsersService {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
 
+    // Get the default USER role
+    const defaultRole = await this.prisma.role.findFirst({
+      where: { name: 'USER' },
+    });
+
     const user = await this.prisma.user.create({
       data: {
         ...createUserDto,
         password: hashedPassword,
         salt,
+        roles: {
+          connect: defaultRole ? [{ id: defaultRole.id }] : undefined,
+        },
       },
       select: {
         id: true,
@@ -42,6 +50,16 @@ export class UsersService {
         firstName: true,
         lastName: true,
         createdAt: true,
+        roles: {
+          select: {
+            name: true,
+            permissions: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
       },
     });
 

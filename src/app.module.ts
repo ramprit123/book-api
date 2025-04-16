@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
-import { RolesModule } from './roles/roles.module';
-import { PermissionsModule } from './permissions/permissions.module';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
-import { PrismaModule } from './prisma/prisma.module';
 import configuration, { configValidationSchema } from './config/configuration';
+import { PermissionsModule } from './permissions/permissions.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { ProductsModule } from './products/products.module';
+import { RolesModule } from './roles/roles.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import configuration, { configValidationSchema } from './config/configuration';
     UsersModule,
     PrismaModule,
     RolesModule,
-    PermissionsModule
+    PermissionsModule,
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
