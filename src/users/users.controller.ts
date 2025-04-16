@@ -1,22 +1,20 @@
+import { RolesGuard } from '@app/auth/guards/roles.guard';
 import {
-  Controller,
-  Post,
   Body,
+  Controller,
+  Delete,
   Get,
   Param,
+  Post,
   Put,
-  Delete,
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { UsersService } from './users.service';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { RolesGuard } from '@app/auth/guards/roles.guard';
-import { AuthGuard } from '@nestjs/passport';
-import { Roles } from '@app/auth/decorators/roles.decorator';
-import { Role } from '@app/auth/enums/roles.enum';
+import { UsersService } from './users.service';
 
 @ApiTags('Users')
 @Controller('users')
