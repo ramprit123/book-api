@@ -1,8 +1,32 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
+  "sourceRoot": "apps/book-api/src",
   "compilerOptions": {
-    "deleteOutDir": true
+    "deleteOutDir": true,
+    "webpack": true,
+    "tsConfigPath": "apps/book-api/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/book-api",
+  "projects": {
+    "book-api": {
+      "type": "application",
+      "root": "apps/book-api",
+      "entryFile": "main",
+      "sourceRoot": "apps/book-api/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/book-api/tsconfig.app.json"
+      }
+    },
+    "payments-app": {
+      "type": "application",
+      "root": "apps/payments-app",
+      "entryFile": "main",
+      "sourceRoot": "apps/payments-app/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/payments-app/tsconfig.app.json"
+      }
+    }
   }
 }

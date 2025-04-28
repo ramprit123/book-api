@@ -18,11 +18,21 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@app/*": ["src/*"],
-      "@auth/*": ["src/auth/*"],
-      "@users/*": ["src/users/*"],
-      "@prisma/*": ["src/prisma/*"],
-      "@config/*": ["src/config/*"]
+      "@app/*": [
+        "src/*"
+      ],
+      "@auth/*": [
+        "src/auth/*"
+      ],
+      "@config/*": [
+        "src/config/*"
+      ],
+      "@prisma/*": [
+        "src/prisma/*"
+      ],
+      "@users/*": [
+        "src/users/*"
+      ]
     }
   }
 }
