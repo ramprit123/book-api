@@ -14,7 +14,7 @@ import { UsersModule } from './users/users.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env', // Explicitly point to root .env file
+      envFilePath: '.env',
       load: [configuration],
       validationSchema: configValidationSchema,
     }),
