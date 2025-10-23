@@ -80,6 +80,18 @@ export class UsersService {
         firstName: true,
         lastName: true,
         createdAt: true,
+        roles: {
+          select: {
+            id: true,
+            name: true,
+            permissions: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
       },
     });
     if (!user) {

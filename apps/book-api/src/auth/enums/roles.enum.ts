@@ -1,5 +1,6 @@
 export enum Role {
   ADMIN = 'ADMIN',
+  MANAGER = 'MANAGER',
   USER = 'USER',
 }
 
@@ -37,6 +38,12 @@ export const RolePermissions = {
     Permission.READ_PRODUCT,
     Permission.UPDATE_PRODUCT,
     Permission.DELETE_PRODUCT,
+  ],
+  [Role.MANAGER]: [
+    Permission.CREATE_PRODUCT,
+    Permission.READ_PRODUCT,
+    Permission.UPDATE_PRODUCT,
+    Permission.READ_USER,
   ],
   [Role.USER]: [
     Permission.READ_BOOK,

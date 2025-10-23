@@ -9,29 +9,29 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBody,
-  ApiQuery,
-  ApiParam,
-} from '@nestjs/swagger';
-import { ProductsService } from './products.service';
-import { CreateProductDto } from './dto/create-product.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { Permission, Role } from '../auth/enums/roles.enum';
-import { Auth } from '../auth/decorators/roles.decorator';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { Auth } from '../auth/decorators/roles.decorator';
+import { Permission } from '../auth/enums/roles.enum';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { CreateProductDto } from './dto/create-product.dto';
+import { ProductsService } from './products.service';
 
 @ApiTags('Products')
 @Controller('products')
-@Auth({ roles: [Role.ADMIN] })
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Auth({ permissions: [Permission.CREATE_PRODUCT] })
   @ApiOperation({ summary: 'Create a new product' })
   @ApiResponse({
@@ -39,13 +39,29 @@ export class ProductsController {
     description: 'Product created successfully',
     type: CreateProductDto,
   })
-  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request - Invalid input data or user not found',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - Authentication required',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Insufficient permissions',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Conflict - Product already exists',
+  })
   @ApiBody({ type: CreateProductDto })
   create(@Body() createProductDto: CreateProductDto, @CurrentUser() user: any) {
     return this.productsService.create(createProductDto, user.id);
   }
 
   @Post('bulk')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Auth({ permissions: [Permission.CREATE_PRODUCT] })
   @ApiOperation({ summary: 'Create multiple products' })
   @ApiResponse({
@@ -63,8 +79,8 @@ export class ProductsController {
   }
 
   @Get()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Auth({
-    roles: [Role.USER, Role.ADMIN],
     permissions: [Permission.READ_PRODUCT],
   })
   @ApiOperation({ summary: 'Get all products with pagination' })
@@ -86,8 +102,8 @@ export class ProductsController {
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Auth({
-    roles: [Role.USER, Role.ADMIN],
     permissions: [Permission.READ_PRODUCT],
   })
   @ApiOperation({ summary: 'Get product by id' })
@@ -103,6 +119,7 @@ export class ProductsController {
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Auth({ permissions: [Permission.UPDATE_PRODUCT] })
   @ApiOperation({ summary: 'Update product' })
   @ApiResponse({
@@ -118,9 +135,19 @@ export class ProductsController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Auth({ permissions: [Permission.DELETE_PRODUCT] })
   @ApiOperation({ summary: 'Delete product' })
   @ApiResponse({ status: 200, description: 'Product deleted successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request - Invalid product ID' })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - Authentication required',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Insufficient permissions to delete products',
+  })
   @ApiResponse({ status: 404, description: 'Product not found' })
   @ApiParam({ name: 'id', description: 'Product ID' })
   remove(@Param('id') id: string) {
